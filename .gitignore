@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# cloudflare worker
+worker/node_modules
+worker/.wrangler
+
 # local tooling state (the .claude/rules + skills ARE tracked on purpose)
 .claude/settings.local.json
 .playwright-mcp/

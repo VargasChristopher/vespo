@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vespo-quote-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-22",
+
+  // Restricting the recipient list means that even if this Worker were ever
+  // tricked into sending, it can only ever mail the owner's inbox.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_destination_addresses": ["chrispy.en1@gmail.com"]
+    }
+  ],
+
+  "vars": {
+    // MAIL_FROM must be on a domain onboarded to Email Sending
+    // (`npx wrangler email sending enable vespo.io`). The mailbox does not
+    // need to exist — it is only an envelope sender.
+    "MAIL_FROM": "site@vespo.io",
+    // MAIL_TO must be a VERIFIED destination address on the account.
+    "MAIL_TO": "chrispy.en1@gmail.com",
+    // Only these origins may POST. First entry is the CORS fallback.
+    "ALLOWED_ORIGINS": "https://vespo.io,https://www.vespo.io,http://localhost:3000"
+  },
+
+  // Serves the endpoint at https://api.vespo.io/quote.
+  // Requires a proxied DNS record for `api` on vespo.io (see README).
+  "routes": [
+    {
+      "pattern": "api.vespo.io/quote",
+      "zone_name": "vespo.io"
+    }
+  ],
+
+  "observability": {
+    "enabled": true
+  }
+}

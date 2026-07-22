@@ -180,6 +180,13 @@ const QUESTIONS: QuizQuestion[] = [
 
 const TIMELINES = ["Before the next rush", "1 to 3 months", "Just exploring"];
 
+/* The site is a static export, so there is no /api route to POST to. This is
+   the Cloudflare Worker in worker/, which emails the submission to the owner.
+   Override per-environment with NEXT_PUBLIC_QUOTE_ENDPOINT (inlined at build
+   time — see .github/workflows/deploy.yml). */
+const QUOTE_ENDPOINT =
+  process.env.NEXT_PUBLIC_QUOTE_ENDPOINT ?? "https://api.vespo.io/quote";
+
 function initialData(): QuoteFormData {
   return {
     projectType: null,
@@ -240,6 +247,11 @@ export function PricingQuiz() {
   const [step, setStep] = React.useState(0); // 0-2 questions, 3 contact, 4 done
   const [direction, setDirection] = React.useState(1);
   const [data, setData] = React.useState<QuoteFormData>(initialData);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
+  /* Honeypot. Hidden from people and from screen readers; bots fill every
+     field they find, so anything here means "discard". */
+  const [company, setCompany] = React.useState("");
 
   const update = <K extends keyof QuoteFormData>(key: K, value: QuoteFormData[K]) =>
     setData((d) => ({ ...d, [key]: value }));
@@ -263,16 +275,43 @@ export function PricingQuiz() {
     setStep(0);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stepValid) return;
+    if (!stepValid || submitting) return;
     setDirection(1);
     if (step < 3) {
       setStep(step + 1);
-    } else {
-      // TODO(api): POST to /api/quote and pipe into CRM + reply-within-24h flow.
-      console.log("pricing-quote submission", data);
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch(QUOTE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          /* Send the human-readable labels, not the option ids — this lands
+             in an inbox, not a database. */
+          projectType: optionLabel("projectType", data.projectType),
+          fleetSize: optionLabel("fleetSize", data.fleetSize),
+          budget: optionLabel("budget", data.budget),
+          timeline: data.timeline,
+          truckName: data.truckName,
+          ownerName: data.ownerName,
+          email: data.email,
+          notes: data.notes,
+          company,
+        }),
+      });
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
       setStep(4);
+    } catch {
+      setSubmitError(
+        "That didn't send. Try again, or email chrispy.en1@gmail.com directly."
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -439,6 +478,19 @@ export function PricingQuiz() {
                   </div>
                 ) : (
                   <div className="grid gap-5">
+                    {/* Honeypot: off-screen, unlabelled, hidden from AT and
+                        excluded from tab order. Only bots fill it in, and the
+                        Worker silently discards anything that does. */}
+                    <input
+                      type="text"
+                      name="company"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -left-[9999px] size-0 opacity-0"
+                    />
                     <Field label="Truck name" htmlFor="quote-truck" required>
                       <Input
                         id="quote-truck"
@@ -535,12 +587,12 @@ export function PricingQuiz() {
                   )}
                   <Button
                     type="submit"
-                    disabled={!stepValid}
+                    disabled={!stepValid || submitting}
                     className="group h-11 rounded-full px-6 text-sm shadow-glow-lg hover:shadow-glow-xl"
                   >
                     {step === 3 ? (
                       <>
-                        Book My Audit Call
+                        {submitting ? "Sending…" : "Book My Audit Call"}
                         <Send />
                       </>
                     ) : (
@@ -554,6 +606,14 @@ export function PricingQuiz() {
                 {!stepValid && step === 3 && (
                   <p className="mt-3 text-right text-xs text-muted-foreground">
                     Truck name, your name, and a real email get your call booked.
+                  </p>
+                )}
+                {submitError && (
+                  <p
+                    role="alert"
+                    className="mt-3 text-right text-xs text-destructive"
+                  >
+                    {submitError}
                   </p>
                 )}
               </motion.form>

@@ -29,8 +29,13 @@ jobs:
 
       - run: npm ci
 
-      # `output: "export"` writes the static site to ./out
+      # `output: "export"` writes the static site to ./out.
+      # NEXT_PUBLIC_* is inlined at build time; set the repo variable
+      # QUOTE_ENDPOINT to point the contact form somewhere other than the
+      # default (https://api.vespo.io/quote) — e.g. a *.workers.dev URL.
       - run: npm run build
+        env:
+          NEXT_PUBLIC_QUOTE_ENDPOINT: ${{ vars.QUOTE_ENDPOINT }}
 
       - uses: actions/configure-pages@v5
 
