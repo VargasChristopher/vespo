@@ -184,8 +184,11 @@ const TIMELINES = ["Before the next rush", "1 to 3 months", "Just exploring"];
    the Cloudflare Worker in worker/, which emails the submission to the owner.
    Override per-environment with NEXT_PUBLIC_QUOTE_ENDPOINT (inlined at build
    time — see .github/workflows/deploy.yml). */
+/* `||`, deliberately not `??`. GitHub Actions renders an unset repo variable
+   as an EMPTY STRING, so `??` would keep "" and fetch("") posts to the current
+   page — which GitHub Pages answers with a 405. */
 const QUOTE_ENDPOINT =
-  process.env.NEXT_PUBLIC_QUOTE_ENDPOINT ?? "https://api.vespo.io/quote";
+  process.env.NEXT_PUBLIC_QUOTE_ENDPOINT || "https://api.vespo.io/quote";
 
 function initialData(): QuoteFormData {
   return {
