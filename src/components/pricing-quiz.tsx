@@ -304,7 +304,14 @@ export function PricingQuiz() {
           company,
         }),
       });
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      if (!res.ok) {
+        /* Surface the real reason in devtools. A 403 here almost always means
+           the page was served over http:// so the Origin did not match the
+           Worker's allowlist. */
+        const detail = await res.text().catch(() => "");
+        console.error("quote submit failed", res.status, detail);
+        throw new Error(`Request failed: ${res.status}`);
+      }
       setStep(4);
     } catch {
       setSubmitError(
