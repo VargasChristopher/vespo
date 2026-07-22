@@ -1,0 +1,270 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ */
+/* Vespo "expensive sage" system — LIGHT (warm paper, green ink).      */
+/* Sage primary #7c9082 is kept; the ink shifts blue-navy → green, the */
+/* hairlines gain a sage tint, and two new tokens (--primary-strong,   */
+/* --accent-warm) plus a --glow triplet drive emphasis + shadows.      */
+:root {
+  --background: #f8f7f4;
+  --foreground: #1b231d;
+  --card: #fffefb;
+  --card-foreground: #1b231d;
+  --popover: #fffefb;
+  --popover-foreground: #1b231d;
+  --primary: #7c9082;
+  /* Ink-on-sage, not white-on-sage: white is 3.40:1 (fails AA); this
+     deep green ink clears 5:1 for button labels. */
+  --primary-foreground: #161c17;
+  /* Deep forest for small emphasis text on paper (~7.8:1 on --background). */
+  --primary-strong: #3f5344;
+  --secondary: #cbd2bc;
+  --secondary-foreground: #1b231d;
+  --muted: #ece9e2;
+  --muted-foreground: #5d675f;
+  --accent: #bfc9bb;
+  --accent-foreground: #1b231d;
+  /* Amber micro-dose: review stars, the $0 gate. Decorative only. */
+  --accent-warm: #d9a441;
+  --destructive: #c73e3a;
+  --destructive-foreground: #ffffff;
+  --border: #dcdacc;
+  --input: #fffefb;
+  --ring: #7c9082;
+  --chart-1: #7c9082;
+  --chart-2: #a0aa88;
+  --chart-3: #8b9d83;
+  --chart-4: #6b7280;
+  --chart-5: #dcdacc;
+  --sidebar: #fafaf8;
+  --sidebar-foreground: #1b231d;
+  --sidebar-primary: #7c9082;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ece9e2;
+  --sidebar-accent-foreground: #1b231d;
+  --sidebar-border: #dcdacc;
+  --sidebar-ring: #7c9082;
+  /* Sage glow, as an RGB triplet consumed by the shadow-glow utilities
+     and by rgb(var(--glow)/…) spotlight/beam colors. Re-tuned per theme. */
+  --glow: 124 144 130;
+  --radius: 0.625rem;
+  --letter-spacing: 0em;
+  --shadow-color: #1a1f2e;
+  --shadow-opacity: 0.04;
+  --shadow-blur: 2px;
+  --shadow-spread: 0px;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 1px;
+  /* Fraunces (display serif) · Instrument Sans (body/UI) · JetBrains Mono. */
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", "Courier New",
+    monospace;
+}
+
+/* Vespo "expensive sage" — DARK (forest-tinted obsidian). Primary is
+   brightened to clear AA on the dark ground; --glow warms accordingly. */
+.dark {
+  --background: #0b0f0c;
+  --foreground: #f2f4ee;
+  --card: #121712;
+  --card-foreground: #f2f4ee;
+  --popover: #121712;
+  --popover-foreground: #f2f4ee;
+  --primary: #8fa695;
+  --primary-foreground: #0c110d;
+  --primary-strong: #b8c9bb;
+  --secondary: #1a211b;
+  --secondary-foreground: #f2f4ee;
+  --muted: #1a211b;
+  --muted-foreground: #9caa9c;
+  --accent: #36443a;
+  --accent-foreground: #f2f4ee;
+  --accent-warm: #e2b45c;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #253028;
+  --input: #121712;
+  --ring: #8fa695;
+  --chart-1: #8fa695;
+  --chart-2: #a9b891;
+  --chart-3: #93a389;
+  --chart-4: #6b7280;
+  --chart-5: #3a4a3e;
+  --sidebar: #0f0f0f;
+  --sidebar-foreground: #f2f4ee;
+  --sidebar-primary: #8fa695;
+  --sidebar-primary-foreground: #0c110d;
+  --sidebar-accent: #1a211b;
+  --sidebar-accent-foreground: #f2f4ee;
+  --sidebar-border: #253028;
+  --sidebar-ring: #8fa695;
+  --glow: 143 166 149;
+  --shadow-color: #000000;
+}
+
+/* ------------------------------------------------------------------ */
+/* DARK BANDS. A section carries data-band="dark" AND class="dark":     */
+/*   • this rule remaps the shadcn tokens to a lifted forest "material" */
+/*     (kept lighter than page-dark so bands never read as holes), and  */
+/*   • the dark class makes @custom-variant dark (&:is(.dark *)) fire    */
+/*     for descendants (logo dark:invert, etc.) under BOTH page themes.  */
+/* MUST stay after .dark: same 0-1-0 specificity, so source order wins  */
+/* on the band element (which matches both selectors).                  */
+[data-band="dark"] {
+  --background: #141b16;
+  --foreground: #f4f6ef;
+  --card: #1b2420;
+  --card-foreground: #f4f6ef;
+  --popover: #1b2420;
+  --popover-foreground: #f4f6ef;
+  --primary: #a3b9a8;
+  --primary-foreground: #10150f;
+  --primary-strong: #cddccf;
+  --secondary: #202a23;
+  --secondary-foreground: #f4f6ef;
+  --muted: #202a23;
+  --muted-foreground: #a8b3a6;
+  --accent: #2c3a30;
+  --accent-foreground: #f4f6ef;
+  --accent-warm: #e2b45c;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #2c3a30;
+  --input: #1b2420;
+  --ring: #a3b9a8;
+  --chart-1: #a3b9a8;
+  --chart-2: #b9c7a4;
+  --chart-3: #a3b399;
+  --chart-4: #8f9a86;
+  --chart-5: #43524a;
+  --glow: 163 185 168;
+  --shadow-color: #000000;
+}
+
+/* Map brand vars into Tailwind v4 theme namespaces + add the new
+   display font, emphasis/amber colors, glow shadows, and fluid scale. */
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 6px);
+  --radius-3xl: calc(var(--radius) + 14px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-strong: var(--primary-strong);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-warm: var(--accent-warm);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Sage glow shadow ramp — retires the ~51 rgba(124,144,130,…) literals.
+     var(--glow) is late-bound, so each adapts to theme + band. */
+  --shadow-glow: 0 8px 32px rgb(var(--glow) / 0.12);
+  --shadow-glow-md: 0 8px 32px rgb(var(--glow) / 0.18);
+  --shadow-glow-lg: 0 8px 40px rgb(var(--glow) / 0.32);
+  --shadow-glow-xl: 0 10px 44px rgb(var(--glow) / 0.48);
+
+  /* Fluid type scale (display Fraunces / body). */
+  --text-display: clamp(2.75rem, 1.6rem + 4.6vw, 5rem);
+  /* Leading keeps descenders clear of the background-clip:text paint box on
+     gradient headlines; the tight tracking suits a geometric sans at display. */
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.025em;
+  --text-title: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+  --text-title--line-height: 1.12;
+  --text-title--letter-spacing: -0.02em;
+  --text-title-sm: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+  --text-title-sm--line-height: 1.16;
+  --text-title-sm--letter-spacing: -0.01em;
+  --text-lede: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --text-lede--line-height: 1.6;
+
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
+
+/* Display face: Sora (geometric sans). Semibold for confident headlines. */
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  letter-spacing: var(--letter-spacing);
+  line-height: 1.6;
+}
+
+::selection {
+  background: rgb(var(--glow) / 0.35);
+  color: var(--foreground);
+}
+
+/* Framer Motion paths are guarded via useReducedMotion(); Lenis/GSAP are
+   never instantiated under reduced motion. This covers the remaining
+   CSS-driven animations (sheet slide, marquee, pulse) the same way. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
