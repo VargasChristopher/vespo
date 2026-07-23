@@ -380,11 +380,16 @@ export function ServicePillars() {
       {PILLARS.map((pillar) => (
         <section key={pillar.id} id={pillar.id} className="scroll-mt-24">
           <Reveal>
+            {/* min-w-0 on both columns is load-bearing. Grid items default to
+                min-width:auto, so a column refuses to shrink below its content's
+                intrinsic width — the demo cards have wide flex rows, which pushed
+                the page 8px past the viewport on a 390px phone and made the whole
+                site scroll sideways. */}
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
               <Parallax
                 y={[16, -16]}
                 className={cn(
-                  "relative isolate grid gap-5",
+                  "relative isolate grid min-w-0 gap-5",
                   pillar.flip && "lg:order-2"
                 )}
               >
@@ -413,7 +418,7 @@ export function ServicePillars() {
               </Parallax>
               <Parallax
                 y={[-16, 16]}
-                className={cn(pillar.flip && "lg:order-1")}
+                className={cn("min-w-0", pillar.flip && "lg:order-1")}
               >
                 {pillar.demo}
               </Parallax>
