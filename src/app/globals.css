@@ -256,6 +256,26 @@ body {
   color: var(--foreground);
 }
 
+/* Mobile GPU budget.
+
+   The glass system puts ~21 backdrop-filter surfaces on screen. Each one makes
+   the compositor re-read and blur everything beneath it, and the cost scales
+   with the blur radius. On a phone renderer that is enough to exhaust the
+   memory budget while scrolling, which Chrome resolves by killing the tab.
+
+   Retuning the theme vars here shrinks every backdrop-blur-* and blur-* utility
+   at once — no call sites to touch, and desktop keeps the full radii. The glass
+   still reads as glass at 10px; it is the 24-40px radii that are ruinous.
+   Paired with the `hidden md:block` gating on the large decorative blurs in
+   botanical-background / floating-orb / hero-section. */
+@media (max-width: 767px) {
+  :root {
+    --blur-xl: 10px;
+    --blur-2xl: 12px;
+    --blur-3xl: 16px;
+  }
+}
+
 /* Framer Motion paths are guarded via useReducedMotion(); Lenis/GSAP are
    never instantiated under reduced motion. This covers the remaining
    CSS-driven animations (sheet slide, marquee, pulse) the same way. */

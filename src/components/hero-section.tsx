@@ -69,13 +69,13 @@ export function HeroSection() {
       {/* Scrubbed parallax ambient orbs */}
       <Parallax
         y={[40, -60]}
-        className="pointer-events-none absolute -left-24 top-24"
+        className="pointer-events-none absolute -left-24 top-24 hidden md:block"
       >
         <div className="size-[22rem] rounded-full bg-primary/10 blur-[100px]" />
       </Parallax>
       <Parallax
         y={[20, -30]}
-        className="pointer-events-none absolute -right-24 bottom-16"
+        className="pointer-events-none absolute -right-24 bottom-16 hidden md:block"
       >
         <div className="size-[26rem] rounded-full bg-chart-2/10 blur-[110px]" />
       </Parallax>

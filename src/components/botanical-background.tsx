@@ -14,6 +14,14 @@ import { cn } from "@/lib/utils";
  * 2. Everything else is intentionally static: velvet radial wash, three canopy
  *    god rays, matte grain overlay, emblem watermark. Under prefers-reduced-motion
  *    the leaks hold their midpoint opacity with no animation.
+ *
+ * MOBILE (<768px): every blurred layer below is `hidden md:block`. This element
+ * is position:fixed, so it never scrolls off, and a 640px box with a 180px blur
+ * needs roughly a 1720² texture — times six layers, three of them animating
+ * forever, with ~24 backdrop-blur surfaces stacked on top re-reading it every
+ * frame. That combination exhausts the renderer's memory budget on a phone and
+ * Chrome kills the tab. The wash, vignette, and grain carry the look on mobile;
+ * they are plain gradients and cost nothing.
  */
 
 /* SVG fractal-noise grain; dithers the radial wash to kill gradient banding */
@@ -36,21 +44,21 @@ export function BotanicalBackground({ className }: { className?: string }) {
       {/* Canopy god rays — three static angled light shafts from the top, as if
           sun were cutting through leaves. Conic slivers, heavily blurred. */}
       <div
-        className="absolute -top-24 left-[14%] h-[40rem] w-[6rem] -rotate-[12deg] bg-gradient-to-b from-chart-3/10 via-chart-3/3 to-transparent blur-[68px]"
+        className="absolute -top-24 left-[14%] hidden md:block h-[40rem] w-[6rem] -rotate-[12deg] bg-gradient-to-b from-chart-3/10 via-chart-3/3 to-transparent blur-[68px]"
         style={{ transformOrigin: "top center" }}
       />
       <div
-        className="absolute -top-24 left-[30%] h-[42rem] w-[7rem] -rotate-[18deg] bg-gradient-to-b from-primary/12 via-primary/4 to-transparent blur-[64px]"
+        className="absolute -top-24 left-[30%] hidden md:block h-[42rem] w-[7rem] -rotate-[18deg] bg-gradient-to-b from-primary/12 via-primary/4 to-transparent blur-[64px]"
         style={{ transformOrigin: "top center" }}
       />
       <div
-        className="absolute -top-24 left-[52%] h-[36rem] w-[5rem] -rotate-[26deg] bg-gradient-to-b from-chart-2/10 via-chart-2/3 to-transparent blur-[72px]"
+        className="absolute -top-24 left-[52%] hidden md:block h-[36rem] w-[5rem] -rotate-[26deg] bg-gradient-to-b from-chart-2/10 via-chart-2/3 to-transparent blur-[72px]"
         style={{ transformOrigin: "top center" }}
       />
 
       {/* Ambient canopy light leaks */}
       <motion.div
-        className="absolute -top-40 left-1/2 size-[50rem] -translate-x-1/2 rounded-full bg-gradient-to-b from-primary/25 via-chart-3/10 to-transparent blur-[160px]"
+        className="absolute -top-40 left-1/2 hidden md:block size-[50rem] -translate-x-1/2 rounded-full bg-gradient-to-b from-primary/25 via-chart-3/10 to-transparent blur-[160px]"
         animate={
           reduceMotion
             ? { opacity: 0.28 }
@@ -63,7 +71,7 @@ export function BotanicalBackground({ className }: { className?: string }) {
         }
       />
       <motion.div
-        className="absolute -bottom-32 -left-20 size-[40rem] rounded-full bg-chart-2/10 blur-[180px]"
+        className="absolute -bottom-32 -left-20 hidden md:block size-[40rem] rounded-full bg-chart-2/10 blur-[180px]"
         animate={
           reduceMotion ? { opacity: 0.17 } : { opacity: [0.12, 0.22, 0.12] }
         }
@@ -74,7 +82,7 @@ export function BotanicalBackground({ className }: { className?: string }) {
         }
       />
       <motion.div
-        className="absolute -bottom-48 -right-32 size-[34rem] rounded-full bg-chart-3/10 blur-[170px]"
+        className="absolute -bottom-48 -right-32 hidden md:block size-[34rem] rounded-full bg-chart-3/10 blur-[170px]"
         animate={
           reduceMotion ? { opacity: 0.15 } : { opacity: [0.1, 0.2, 0.1] }
         }
@@ -95,7 +103,7 @@ export function BotanicalBackground({ className }: { className?: string }) {
         height={573}
         preload
         style={{ height: "auto" }}
-        className="pointer-events-none absolute -right-32 top-1/3 select-none opacity-[0.015] blur-[1px] dark:brightness-0 dark:invert"
+        className="pointer-events-none absolute -right-32 top-1/3 hidden md:block select-none opacity-[0.015] blur-[1px] dark:brightness-0 dark:invert"
       />
 
       {/* Velvet vignette — darkens the corners so content glows at center */}
