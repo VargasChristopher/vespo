@@ -40,6 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Outreach lead lists. The GitHub repo is public (Pages free tier), and these
+# hold real local businesses' phone numbers and emails — do not publish them.
+# The generator script is fine to track; the CSVs are not.
+leads/*.csv
+
 # cloudflare worker
 worker/node_modules
 worker/.wrangler
